@@ -2,20 +2,24 @@ class SecureController < ApplicationController
   before_action :authenticate_request!
   rescue_from NotAuthenticatedError, with: :access_denied
 
-  def current_user
-    @__current_user__ ||= attempt_user_lookup
+  def current_user(allow_nonexistent: false)
+    @__current_user__ ||= attempt_user_lookup(allow_nonexistent: allow_nonexistent)
+  end
+
+  def current_external_id
+    @__current_user_id__
   end
 
   private
 
-  def attempt_user_lookup
+  def attempt_user_lookup(allow_nonexistent: false)
     if @__current_user_id__.present?
       User.find_by!(external_id: @__current_user_id__)
     else
       nil
     end
   rescue ActiveRecord::RecordNotFound
-    raise NotAuthenticatedError.new
+    (raise NotAuthenticatedError.new) unless allow_nonexistent
   end
 
   def authenticate_request!

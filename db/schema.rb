@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 2021_08_22_002056) do
 
   create_table "users", force: :cascade do |t|
     t.string "external_id", null: false
+    t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["external_id"], name: "index_users_on_external_id", unique: true
